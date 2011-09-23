@@ -1,0 +1,12 @@
+Start at (1,2) take 10 steps
+Step West to (0,2)
+Step South to (0,1)
+Step East to (1,1)
+Step West to (0,1)
+Step South to (0,0)
+Step North to (0,1)
+Step West to (-1,1)
+Step East to (0,1)
+Step South to (0,0)
+Step North to (0,1)
+distance squared from start is 1

@@ -1,0 +1,9 @@
+Start at (0,0) take 7 steps
+Step South to (0,-1)
+Step West to (-1,-1)
+Step North to (-1,0)
+Step East to (0,0)
+Step South to (0,-1)
+Step South to (0,-2)
+Step West to (-1,-2)
+distance squared from start is 5

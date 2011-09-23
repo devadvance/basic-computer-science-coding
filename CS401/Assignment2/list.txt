@@ -1,0 +1,22 @@
+Hank Aaron
+1971 162 22 3 47 495
+Barry Bonds
+2002 149 31 2 46 403
+Rod Carew
+1974 218 30 5 3 599
+Ty Cobb
+1912 226 30 23 7 553
+Joe DiMaggio
+1937 215 35 15 46 621
+Mickey Mantle
+1956 188 22 5 52 533
+Roger Maris
+1961 159 16 4 61 590
+Willie Mays
+1963 187 32 7 38 596
+Babe Ruth
+1920 172 36 9 54 457
+Wilbur Stargell
+1978 115 18 2 28 390
+Ted Williams
+1957 163 28 1 38 420

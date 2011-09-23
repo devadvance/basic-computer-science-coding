@@ -1,0 +1,19 @@
+The word search game is very easy to play. The rules are as follows:
+
+1) Pick a character on the board to start searching from.
+2) From the character you picked, go in any of the possible eight directions, adding up the characters as you go.
+NOTE: The eight directions are up, down, left, right, and the 4 diagonals.
+ALSO, once you go in a specific direction, you CANNOT change direction halfway through.
+3) If the phrase you found is at least 4 letters long, or is equal to or less than 10, and is a dictionary word, you have found a word on the board!
+4) If your prase includes a wildcard, denoted by an asterisk '*', then that can count for any alphabet character! Multiple words are possible.
+
+You can pick any letter and any directions. The goal of the game is to find all the possible words on the board!
+
+Good luck!
+
+Available command line options:
+"-help": Displays information about other command line options and plays the game.
+"-board FILENAME": Specifies game board file.
+"-dict FILENAME": Specifies dictionary file.
+
+You can run the game without any command line options, and will be asked for both a dictionary and board filename when the game runs.
