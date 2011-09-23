@@ -28,7 +28,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 University of Pittsburgh
 CS449
 Project 1b
-Modified: 2011-09-22 @ 21:04
+Modified: 2011-09-23 @ 00:55
+
+Note: Tested successfully by compiling with the following argument:
+gcc -O2 -o id3tagEd id3tagEd.c
 */
 
 #include <stdio.h>
@@ -48,8 +51,13 @@ struct id3tag {
 		unsigned char genre;
 };
 
+// Function prototypes
+void print_tag(struct id3tag *tag_p);
+int read_tag(char *path,struct id3tag *tag_p);
+int write_tag(int argument_count, char **arguments,struct id3tag *tag_p);
+
 // Simply prints, in a formatted manner, the contents of an id3tag struct.
-int print_tag(struct id3tag *tag_p) {
+void print_tag(struct id3tag *tag_p) {
 	printf("\nIdentifier: %-3.3s\n",tag_p->identifier);
 	printf("Title: %-30.30s\n",tag_p->title);
 	printf("Artist: %-30.30s\n",tag_p->artist);
@@ -58,9 +66,6 @@ int print_tag(struct id3tag *tag_p) {
 	printf("Comment: %-28.28s\n",tag_p->comment);
 	printf("Track number: %d\n",tag_p->tracknumber);
 	printf("Genre: %d\n\n",tag_p->genre);
-	
-	// Return 0 if everything went fine.
-	return 0;
 }
 
 // This function simply reads the tags in a file. If there are none, it says so. If the file is incorrect, it returns 1, else returns 0.
@@ -80,16 +85,17 @@ int read_tag(char *path,struct id3tag *tag_p) {
 	// Go to 128 bytes from the end of the file, where the tag data should be if it exists.
 	fseek(musicfile,-128L,SEEK_END);
 
+	// Read the last 128 bytes of the file into the tag struct. Note that the tag struct is simply treated as a location in memory.
 	fread(tag_p,1,128,musicfile);
 	fclose(musicfile);
 	
-    if (strncmp(tag_p->identifier,"TAG",3)==0)
+    if (strncmp(tag_p->identifier,"TAG",3)==0) // If the tag contains the identifier, then it has a tag, and it can be printed.
 	{
 		print_tag(tag_p);		
 	}
-	else {
+	else { // Tag did not have the identifier. That is to say, the location in memory did not containt TAG
 		printf("There was no ID3v1.1 tag in the specified file :(\n");
-		return 2;
+		return 2; // Return 2 means that it had no ID3v1.1 tag.
 	}
 	
 	// Return 0 if everything went fine.
@@ -97,9 +103,9 @@ int read_tag(char *path,struct id3tag *tag_p) {
 }
 
 int write_tag(int argument_count, char **arguments,struct id3tag *tag_p) {
-	int read_return;
+	int read_return; // Stores what is returned from the read_tag function.
 	int counter;
-	FILE *write_file;
+	FILE *write_file; // FILE for writing. Same as the file for reading, but reopened specifically to append.
 	
 	// Print the current ID3v1.1 tag, if there is one.
 	printf("Current ID3v1.1 data:\n");
@@ -141,7 +147,7 @@ int write_tag(int argument_count, char **arguments,struct id3tag *tag_p) {
 		fclose(write_file);
 		
 	}
-	else if (read_return == 2) { // If the file read correctly, and it did not have an existing ID3v1.1 tag.
+	else if (read_return == 2) { // If the file read correctly, but it did not have an existing ID3v1.1 tag.
 		printf("The file did not have an existing ID3v1.1 tag.\n");
 		
 		// Set tag struct to all null bytes initially. That way if some tag is not set, then it is just full of null.
@@ -194,8 +200,7 @@ int write_tag(int argument_count, char **arguments,struct id3tag *tag_p) {
 }
 
 // Main function.
-int main (int argcount, char *argvector[]) {
-	
+int main (int argc, char *argv[]) {
 	/*  ID3v1.1 standard information:
 		Offset	length	description
 		0		3		"TAG" identifier string
@@ -213,12 +218,11 @@ int main (int argcount, char *argvector[]) {
 	char *file_location;
 	struct id3tag the_tag;
 	int temp_return;
-	int i;
 	
 	// Initially set temp_return equal to 0.
 	temp_return = 0;
 	
-	if (argcount == 1) { // If the user does not enter any arguments. WILL CHANGE PROGRAMNAME LATER.
+	if (argc == 1) { // If the user does not enter any arguments. WILL CHANGE PROGRAMNAME LATER.
 		printf("You entered no filename!\nCorrect usage:\nPROGRAMNAME FILE_NAME.EXT\n\tDisplay current ID3v1.1 data in a file\nPROGRAMNAME FILE_NAME.EXT -SWITCH NEW_DATA ...\n\tEither changes the existing ID3v1.1 data, or creates a new tag with the specified data.\n");
 		printf("\nAvailable switches:");
 		printf("\n-TITLE \"TITLE_DATA\"\t-\tSets the title to the specified data");
@@ -228,14 +232,14 @@ int main (int argcount, char *argvector[]) {
 		printf("\n-COMMENT \"COMMENT_DATA\"\t-\tSets the comment to the specified data");
 		printf("\n-TRACK \"TRACK_NUMBER\"\t-\tSets the track to the specified number\n\n");
 	}
-	else if (argcount == 2) { // If the user only enters a filename, just read out the tag.
-		file_location = argvector[1];
+	else if (argc == 2) { // If the user only enters a filename, just read out the tag.
+		file_location = argv[1];
 		temp_return = read_tag(file_location,&the_tag);
 	}
-	else if ((argcount % 2) == 1) // If the user enters an invalid number of arguments. 2 arguments for program name and filename, and then 2 more each for switches. If it is an odd number, they're missing something.
+	else if ((argc % 2) == 1) // If the user enters an invalid number of arguments. 2 arguments for program name and filename, and then 2 more each for switches. If it is an odd number, they're missing something.
 		printf("Invalid number of arguments!\n");
-	else if ((argcount % 2) == 0) { // If the user enteres a correct number of arguments beyond just the program name and filename, then they want to write some tag data.
-		temp_return = write_tag(argcount,argvector,&the_tag);
+	else if ((argc % 2) == 0) { // If the user enteres a correct number of arguments beyond just the program name and filename, then they want to write some tag data.
+		temp_return = write_tag(argc,argv,&the_tag);
 	}
 	
 	if (temp_return == 1) // If the user entered an invalid filename.
