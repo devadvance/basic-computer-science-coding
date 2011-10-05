@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2011, encryptstream
+Copyright (c) 2011, encryptstream (mgj7@pitt.edu)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,7 +28,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 University of Pittsburgh
 CS449
 Project 1a
-Modified: 2011-09-23 @ 01:15
+Modified: 2011-09-24 @ 19:30
 
 Note: Tested successfully by compiling with the following argument:
 gcc -O2 -o blackjack blackjack.c
@@ -68,24 +68,16 @@ int main() {
 	
 	int number_of_dealer_cards,number_of_my_cards,sum_dealer_cards,sum_my_cards,temp_counter,stand,dealer_ace_position,my_ace_position;
 
-	char input[20],consume;
+	char input[20];
+	char consume;
 
 	srand((unsigned int)time(NULL));
 	
 	// Deal the first two cards to both the dealer and the player. Create the initial sum values and set the number of cards each to 2.
 	dealer_ace_position = -1;
 	my_ace_position = -1;
-
-	dealer_cards[0] = value_of_card(rand() % (14 - 2 + 1) + 2,dealer_ace_position);
-	if (dealer_cards[0] == 11)
-		dealer_ace_position = 0;
-	dealer_cards[1] = value_of_card(rand() % (14 - 2 + 1) + 2,dealer_ace_position);
-	if (dealer_cards[1] == 11)
-		dealer_ace_position = 1;
-	sum_dealer_cards = dealer_cards[0] + dealer_cards[1];
-	number_of_dealer_cards = 2;
 	
-
+	// Deal cads to the player first. If an ace comes up, save that position as the ace position.
 	my_cards[0] = value_of_card(rand() % (14 - 2 + 1) + 2,my_ace_position);
 	if (my_cards[0] == 11)
 		my_ace_position = 0;
@@ -94,9 +86,20 @@ int main() {
 		my_ace_position = 1;
 	sum_my_cards = my_cards[0] + my_cards[1];
 	number_of_my_cards = 2;
+	
+	// Deal cads to the dealer second. If an ace comes up, save that position as the ace position.
+	dealer_cards[0] = value_of_card(rand() % (14 - 2 + 1) + 2,dealer_ace_position);
+	if (dealer_cards[0] == 11)
+		dealer_ace_position = 0;
+	dealer_cards[1] = value_of_card(rand() % (14 - 2 + 1) + 2,dealer_ace_position);
+	if (dealer_cards[1] == 11)
+		dealer_ace_position = 1;
+	sum_dealer_cards = dealer_cards[0] + dealer_cards[1];
+	number_of_dealer_cards = 2;
 
 	printf("Welcome to the Blackjack game!\n\nPress Enter to play!\n\n");
 	
+	// Wait for the player to hit Enter.
 	getchar();
 
 	printf("The dealer:\n? + %d\n\n",dealer_cards[1]);
@@ -134,19 +137,19 @@ int main() {
 					my_ace_position = -2;
 				}
 			}
-
+			
+			// Print the current cards and their sum.
 			printf("\nYou:\n%d",my_cards[0]);
-			for(temp_counter = 1;temp_counter < number_of_my_cards;temp_counter++) {
+			for(temp_counter = 1;temp_counter < number_of_my_cards;temp_counter++)
 				printf(" + %d",my_cards[temp_counter]);
-			}
+				
 			printf(" = %d\n",sum_my_cards);
 			
 			if(number_of_my_cards == 7)
 				stand = 1;
 		}
-		else {
-			printf("You entered something invalid. Try again.\n ");
-		}
+		else
+			printf("You entered something invalid. Try again.\n "); // If the player enters something other than hit or stand.
 	}
 
 	stand = 0;

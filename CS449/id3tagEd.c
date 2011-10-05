@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2011, encryptstream
+Copyright (c) 2011, encryptstream (mgj7@pitt.edu)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,7 +28,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 University of Pittsburgh
 CS449
 Project 1b
-Modified: 2011-09-23 @ 00:55
+Modified: 2011-09-24 @ 19:30
 
 Note: Tested successfully by compiling with the following argument:
 gcc -O2 -o id3tagEd id3tagEd.c
@@ -47,7 +47,7 @@ struct id3tag {
 		char year[4];
 		char comment[28];
 		char separator;
-		unsigned char tracknumber;
+		unsigned char track;
 		unsigned char genre;
 };
 
@@ -58,13 +58,12 @@ int write_tag(int argument_count, char **arguments,struct id3tag *tag_p);
 
 // Simply prints, in a formatted manner, the contents of an id3tag struct.
 void print_tag(struct id3tag *tag_p) {
-	printf("\nIdentifier: %-3.3s\n",tag_p->identifier);
 	printf("Title: %-30.30s\n",tag_p->title);
 	printf("Artist: %-30.30s\n",tag_p->artist);
 	printf("Album: %-30.30s\n",tag_p->album);
 	printf("Year: %-4.4s\n",tag_p->year);
 	printf("Comment: %-28.28s\n",tag_p->comment);
-	printf("Track number: %d\n",tag_p->tracknumber);
+	printf("Track number: %d\n",tag_p->track);
 	printf("Genre: %d\n\n",tag_p->genre);
 }
 
@@ -73,7 +72,7 @@ int read_tag(char *path,struct id3tag *tag_p) {
 	FILE *musicfile;
 	
 	// Prints the filename entered by the user.
-	printf("Filename: %s\n",path);
+	printf("\nFilename: %s\n",path);
 	
 	// Open the file to read.
 	musicfile = fopen(path,"rb");
@@ -90,11 +89,9 @@ int read_tag(char *path,struct id3tag *tag_p) {
 	fclose(musicfile);
 	
     if (strncmp(tag_p->identifier,"TAG",3)==0) // If the tag contains the identifier, then it has a tag, and it can be printed.
-	{
-		print_tag(tag_p);		
-	}
+		print_tag(tag_p);
 	else { // Tag did not have the identifier. That is to say, the location in memory did not containt TAG
-		printf("There was no ID3v1.1 tag in the specified file :(\n");
+		printf("There was no ID3v1.1 tag in the specified file.\n");
 		return 2; // Return 2 means that it had no ID3v1.1 tag.
 	}
 	
@@ -107,8 +104,8 @@ int write_tag(int argument_count, char **arguments,struct id3tag *tag_p) {
 	int counter;
 	FILE *write_file; // FILE for writing. Same as the file for reading, but reopened specifically to append.
 	
-	// Print the current ID3v1.1 tag, if there is one.
-	printf("Current ID3v1.1 data:\n");
+	// Print the original ID3v1.1 tag, if there is one.
+	printf("\nOriginal ID3v1.1 tag:\n");
 	read_return = read_tag(arguments[1],tag_p);
 	
 	// Return 1 if the file was empty or somehow otherwise bad.
@@ -116,8 +113,7 @@ int write_tag(int argument_count, char **arguments,struct id3tag *tag_p) {
 		return 1;
 	else if (read_return == 0) { // If the file read correctly, and it had an existing ID3v1.1 tag.
 		// Loop to check to see if there are tags to be set. If the user enters an incorrect switch, such as -FOOBAR, that switch and the data that follows it is simply ignored.
-		for (counter = 2;counter < argument_count;counter++)
-		{
+		for (counter = 2;counter < argument_count;counter++) {
 			if ((strcmp(arguments[counter],"-TITLE")) == 0)
 				strncpy(tag_p->title,arguments[++counter],30);
 			else if ((strcmp(arguments[counter],"-ARTIST")) == 0)
@@ -129,7 +125,7 @@ int write_tag(int argument_count, char **arguments,struct id3tag *tag_p) {
 			else if ((strcmp(arguments[counter],"-COMMENT")) == 0)
 				strncpy(tag_p->comment,arguments[++counter],28);
 			else if ((strcmp(arguments[counter],"-TRACK")) == 0)
-				tag_p->tracknumber = atoi(arguments[++counter]);
+				tag_p->track = atoi(arguments[++counter]);
 		}
 		
 		// Open file for reading and writing.
@@ -145,11 +141,8 @@ int write_tag(int argument_count, char **arguments,struct id3tag *tag_p) {
 		// Write the tag to the file in one go. Writes as a byte stream. Then closes the file.
 		fwrite(tag_p,1,128,write_file);
 		fclose(write_file);
-		
 	}
-	else if (read_return == 2) { // If the file read correctly, but it did not have an existing ID3v1.1 tag.
-		printf("The file did not have an existing ID3v1.1 tag.\n");
-		
+	else if (read_return == 2) { // If the file read correctly, but it did not have an existing ID3v1.1 tag.		
 		// Set tag struct to all null bytes initially. That way if some tag is not set, then it is just full of null.
 		// There is probably a better way to do this with memset or something like that. We haven't learned that yet...
 		strncpy(tag_p->identifier,"TAG",3);
@@ -159,24 +152,23 @@ int write_tag(int argument_count, char **arguments,struct id3tag *tag_p) {
 		strncpy(tag_p->year,"",4);
 		strncpy(tag_p->comment,"",28);
 		tag_p->separator = '\0';
-		tag_p->tracknumber = atoi("");
-		tag_p->genre = atoi("");
+		tag_p->track = atoi("");
+		tag_p->genre = atoi("0");
 		
 		// Loop to check to see if there are tags to be set. If the user enters an incorrect switch, such as -FOOBAR, that switch and the data that follows it is simply ignored.
-		for (counter = 2;counter < argument_count;counter++)
-		{
-			if ((strcmp(arguments[counter],"-TITLE")) == 0)
+		for (counter = 2;counter < argument_count;counter++) {
+			if ((strcmp(arguments[counter],"-TITLE")) == 0) // If the switch is for the title, grab the next data, and set it to that.
 				strncpy(tag_p->title,arguments[++counter],30);
-			else if ((strcmp(arguments[counter],"-ARTIST")) == 0)
+			else if ((strcmp(arguments[counter],"-ARTIST")) == 0) // If the switch is for the artist, grab the next data, and set it to that.
 				strncpy(tag_p->artist,arguments[++counter],30);
-			else if ((strcmp(arguments[counter],"-ALBUM")) == 0)
+			else if ((strcmp(arguments[counter],"-ALBUM")) == 0) // If the switch is for the album, grab the next data, and set it to that.
 				strncpy(tag_p->album,arguments[++counter],30);
-			else if ((strcmp(arguments[counter],"-YEAR")) == 0)
+			else if ((strcmp(arguments[counter],"-YEAR")) == 0) // If the switch is for the year, grab the next data, and set it to that.
 				strncpy(tag_p->year,arguments[++counter],4);
-			else if ((strcmp(arguments[counter],"-COMMENT")) == 0)
+			else if ((strcmp(arguments[counter],"-COMMENT")) == 0) // If the switch is for the comment, grab the next data, and set it to that.
 				strncpy(tag_p->comment,arguments[++counter],28);
-			else if ((strcmp(arguments[counter],"-TRACK")) == 0)
-				tag_p->tracknumber = atoi(arguments[++counter]);
+			else if ((strcmp(arguments[counter],"-TRACK")) == 0) // If the switch is for the track number, grab the next data, and set it to that.
+				tag_p->track = atoi(arguments[++counter]);
 		}
 		
 		// Open file for apending ONLY.
@@ -192,7 +184,7 @@ int write_tag(int argument_count, char **arguments,struct id3tag *tag_p) {
 	}
 	
 	// Print out the new ID3v1.1 data for the user to see.
-	printf("New ID3v1.1 data:\n");
+	printf("New ID3v1.1 tag:\n");
 	print_tag(tag_p);
 	
 	// Return 0 if everything went fine.
@@ -215,7 +207,6 @@ int main (int argc, char *argv[]) {
 	*/
 	
 	// Variable declaration.
-	char *file_location;
 	struct id3tag the_tag;
 	int temp_return;
 	
@@ -232,15 +223,12 @@ int main (int argc, char *argv[]) {
 		printf("\n-COMMENT \"COMMENT_DATA\"\t-\tSets the comment to the specified data");
 		printf("\n-TRACK \"TRACK_NUMBER\"\t-\tSets the track to the specified number\n\n");
 	}
-	else if (argc == 2) { // If the user only enters a filename, just read out the tag.
-		file_location = argv[1];
-		temp_return = read_tag(file_location,&the_tag);
-	}
+	else if (argc == 2) // If the user only enters a filename, just read out the tag.
+		temp_return = read_tag(argv[1],&the_tag);
 	else if ((argc % 2) == 1) // If the user enters an invalid number of arguments. 2 arguments for program name and filename, and then 2 more each for switches. If it is an odd number, they're missing something.
 		printf("Invalid number of arguments!\n");
-	else if ((argc % 2) == 0) { // If the user enteres a correct number of arguments beyond just the program name and filename, then they want to write some tag data.
+	else if ((argc % 2) == 0) // If the user enteres a correct number of arguments beyond just the program name and filename, then they want to write some tag data.
 		temp_return = write_tag(argc,argv,&the_tag);
-	}
 	
 	if (temp_return == 1) // If the user entered an invalid filename.
 		printf("You entered an invalid filename! :(\n");
