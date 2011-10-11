@@ -1,0 +1,23 @@
+(25) thot $ strings mgj7_1 > out.txt
+(26) thot $ ./mgj7_1
+jpkGGlhtXplGBCemrvVQtKHVTMYNd
+Congratulations!
+Unlocked with passphrase jpkGGlhtXplGBCemrvVQtKHVTMYNd
+(27) thot $
+
+
+Found the following in the output of strings:
+
+(irrelevant output above)
+...
+u!@9
+WVSQ
+jpkGGlhtXplGBCemrvVQtKHVTMYNd
+Sorry! Not correct!
+Congratulations!
+Unlocked with passphrase %s
+/proc/sys/kernel/osrelease
+...
+(more output below)
+
+jpkGGlhtXplGBCemrvVQtKHVTMYNd seemed like a logical choice.
