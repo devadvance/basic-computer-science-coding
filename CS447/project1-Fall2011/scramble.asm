@@ -8,7 +8,7 @@
 # University of Pittsburgh
 # CS447
 # Project 1
-# Modified: 2011-10-09 @ 21:00
+# Modified: 2011-10-11 @ 21:15
 # 
 # Note: Tested successfully with MARS 4.1 (Mips Assembler and Runtime Simulator)
 # 
@@ -28,7 +28,7 @@
 	correct_unscrambled: .asciiz "\nCorrect unscrambled word was:\n"
 	play_again: .asciiz "\nDo you want to play again (y/n)?\n"
 	final_score_phrase: .asciiz "\nYour final score is "
-	goodbye: .asciiz ". Goodbye\n"
+	goodbye: .asciiz ". Goodbye!\n"
 	nl: .asciiz "\n"
 	
 	word_0: .asciiz "motorcycle"
@@ -52,7 +52,7 @@
 	selected_word: .space 32
 	output_word: .space 32
 	
-# Begin code section
+# Begin text section
 # ##################################################
 .text
 main:
@@ -325,6 +325,10 @@ finale:
 	li $v0, 1
 	syscall
 	
+	la $a0, goodbye
+	li $v0, 4
+	syscall
+	
 	j exit
 # ###########################################################################
 # End of game
@@ -338,7 +342,7 @@ finale:
 # ###########################################################################
 
 # #########################
-# len
+# len (taken from lecture example and implemented here)
 # Counts length of string pointetd to by a0.
 # Uses t0, t1, v0, a0
 # Returns length in v0.
@@ -453,5 +457,11 @@ exit_L_check_for_letter:
 # End check_for_letter
 # #########################
 
-# Dropoff exit :)
+# ###########################################################################
+# End of program
+# ###########################################################################
+
+# Exit the program with syscall 10
 exit:
+	li $v0, 10
+	syscall
