@@ -32,6 +32,7 @@ Modified: 2011-11-06 @ 02:30
 
 Note: Tested successfully by compiling with the following argument:
 gcc -m32 -o malloctest malloctest.c
+
 */
 
 #include <stdio.h>
@@ -46,6 +47,12 @@ gcc -m32 -o malloctest malloctest.c
 //replace free here with the appropriate version of myfree
 #define FREE my_free
 
+/* This program performs several tests to check the reliability of the
+ * custom malloc/free functions defined in the header mymalloc.h.
+ * The tests check to make sure that the heap size is dealt with
+ * appropriately, that the "best fit" idea is followed for adjacent
+ * free space, and that nothing goes wrong in general.
+ */
 int main() {
 	
 	char *test;
@@ -257,7 +264,7 @@ int main() {
 	
 	
 	printf("==================================================\n");
-	printf("Fifth test.\nAllocate 4 spaces.\nFree the 1st. Allocated something small to take part of the first.\nThen free the 1st again.\nThen free the 4th, then the 3rd.\nFree the 5th space last.\nChecks to see if merging works, and heap changing works.\n");
+	printf("Fifth test.\nAllocate 4 spaces.\nFree the 1st. Allocated something small to take part of the first.\nThen free the 1st again.\nAllocate something the exact size of the free block.\nFree it, then free all the rest of the blocks.\n");
 	printf("==================================================\n");
 	
 	test = (char*)MALLOC(100);
