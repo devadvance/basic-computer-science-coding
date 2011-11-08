@@ -28,7 +28,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 University of Pittsburgh
 CS449
 Project 3
-Modified: 2011-11-07 @ 21:45
+Modified: 2011-11-07 @ 23:45
 
 Note: Goes with malloctest.c
 */
@@ -176,7 +176,7 @@ void *my_bestfit_malloc(int size) {
  * This is because it DOES NOT have all of the checking that the built-in free function does.
  */
 void my_free(void *ptr) {
-	int sbrk_amount; // 
+	int sbrk_amount; // Amount to change brk by
 	
 	struct node *temp_free_node; // Temporary node pointer that points to the memory location of what was called in free
 	struct node *temp_previous_node; // Temporary node pointer that points the previous node (may be NULL)
