@@ -28,7 +28,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 University of Pittsburgh
 CS449
 Project 3
-Modified: 2011-11-06 @ 02:30
+Modified: 2011-11-07 @ 21:45
 
 Note: Tested successfully by compiling with the following argument:
 gcc -m32 -o malloctest malloctest.c
@@ -37,13 +37,14 @@ gcc -m32 -o malloctest malloctest.c
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 
 //include your code
 
 #include "mymalloc.h"
 
 //replace malloc here with the appropriate version of mymalloc
-#define MALLOC my_malloc
+#define MALLOC my_bestfit_malloc
 //replace free here with the appropriate version of myfree
 #define FREE my_free
 
@@ -65,7 +66,7 @@ int main() {
 	printf("\nBegin testing. sbrk at the beginning %p:\n\n\n", sbrk(0));
 	
 	printf("==================================================\n");
-	printf("First test.\nAllocates 3 times, store strings to the first and last.\nThen free the first and last.\n");
+	printf("First test part A.\nAllocates 3 times, store strings to the first and last.\nThen free the first and last.\n");
 	printf("==================================================\n");
 	test = (char*)MALLOC(50);
 	test2 = (char*)MALLOC(40);
@@ -102,14 +103,14 @@ int main() {
 		testing = testing->next_node;
 	}
 	printf("==================================================\n");
-	printf("End first test.\n");
+	printf("End first test part A.\n");
 	printf("sbrk(0): %p\n", sbrk(0));
 	printf("==================================================\n\n\n");
 	
 	
 	
 	printf("==================================================\n");
-	printf("Second test.\nAllocate another space, smaller than the free node in the heap. \nShould not change the heap size.\nAlso tests to see if merging free nodes works properly.\n");
+	printf("First test part B.\nAllocate another space, smaller than the free node in the heap. \nShould not change the heap size.\nAlso tests to see if merging free nodes works properly.\n");
 	printf("==================================================\n");
 	
 	test = (char*)MALLOC(10);
@@ -135,14 +136,14 @@ int main() {
 		testing = testing->next_node;
 	}
 	printf("==================================================\n");
-	printf("End second test.\n");
+	printf("End first test part B.\n");
 	printf("sbrk(0): %p\n", sbrk(0));
 	printf("==================================================\n\n\n");
 	
 	
 	
 	printf("==================================================\n");
-	printf("Third test.\nAllocate another space, larger than the free node in the heap. \nShould change the heap size.\nThen allocated a smaller node; uses the first empty.\nThen free the third node (not last).\n");
+	printf("First test part C.\nAllocate another space, larger than the free node in the heap. \nShould change the heap size.\nThen allocated a smaller node; uses the first empty.\nThen free the third node (not last).\n");
 	printf("==================================================\n");
 	
 	test4 = (char*)MALLOC(500);
@@ -181,6 +182,80 @@ int main() {
 	FREE(test5);
 	printf("Freeing test4\n");
 	FREE(test4);
+	
+	printf("==================================================\n");
+	printf("End first test part C.\n");
+	printf("sbrk(0): %p\n", sbrk(0));
+	printf("==================================================\n\n\n");
+	
+	
+	
+	printf("==================================================\n");
+	printf("Second test.\nTests attempts to allocate zero and negatives values.\n");
+	printf("==================================================\n");
+	
+	printf("Trying to allocate -100\n");
+	test = MALLOC(-100);
+	if (test == (void*)NULL) {
+		printf("Returned NULL, this is good.\n");
+	}
+	else {
+		printf("SOMETHING WRONG HERE!\n");
+	}
+	
+	printf("Trying to allocate 0\n");
+	test = MALLOC(0);
+	if (test == NULL) {
+		printf("Returned NULL, this is good.\n");
+	}
+	else {
+		printf("SOMETHING WRONG HERE!\n");
+	}
+	printf("==================================================\n");
+	printf("End second test.\n");
+	printf("sbrk(0): %p\n", sbrk(0));
+	printf("==================================================\n\n\n");
+	
+	printf("==================================================\n");
+	printf("Third test.\n");
+	printf("==================================================\n");
+	/*
+	test = MALLOC(INT_MAX);
+	test2 = MALLOC(INT_MAX);
+	test3 = MALLOC(INT_MAX);
+	printf("here\n");
+	if (test == (void*)NULL) {
+		printf("test RETURNED NULL\n");
+	}
+	else {
+		printf("test was good\n");
+		FREE(test);
+	}
+	
+	if (test2 == (void*)NULL) {
+		printf("test2 RETURNED NULL\n");
+	}
+	else {
+		printf("test2 was good\n");
+		FREE(test2);
+	}
+	
+	if (test3 == (void*)NULL) {
+		printf("test3 RETURNED NULL\n");
+	}
+	else {
+		printf("test3 was good\n");
+		FREE(test3);
+	}
+	
+	printf("Linked list of nodes after freeing:\n");
+	testing = first_node;
+	while(testing != NULL) {
+		printf("Current Node: %p Size: %d Used: %d Previous: %p Next: %p\n", testing,testing->size,testing->used,testing->previous_node,testing->next_node);
+		testing = testing->next_node;
+	}
+	
+	*/
 	
 	printf("==================================================\n");
 	printf("End third test.\n");
