@@ -1,4 +1,4 @@
-# Copyright (c) 2011, encryptstream
+# Copyright (c) 2011, Matt Joseph
 # All rights reserved.
 # 
 # Distributed under the New BSD License.

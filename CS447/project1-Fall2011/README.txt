@@ -1,7 +1,7 @@
 # ########################################################################### #
 # ########################################################################### #
 
-Copyright (c) 2011, encryptstream
+Copyright (c) 2011, Matt Joseph
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without

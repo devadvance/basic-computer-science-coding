@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2011, encryptstream (mgj7@pitt.edu)
+Copyright (c) 2011, Matt Joseph (mgj7@pitt.edu)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
