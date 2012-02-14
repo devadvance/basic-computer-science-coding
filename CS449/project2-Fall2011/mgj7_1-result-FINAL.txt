@@ -1,0 +1,50 @@
+############################################################
+
+##########>>>>> Documented steps/comments taken to find the logic of this program <<<<<##########
+
+since I just made a mystrings program, perhaps its useful..
+mystrings mgj7_1 produces a lot of text...maybe there was static linking
+okay, let's run mgj7_1...
+"Sorry! Not correct!" is the output for the wrong passphrase, let's search for that:
+Found the following in the output of mystrings:
+
+(irrelevant output above)
+...
+VjdVS
+WVSS
+u!@9
+WVSQ
+jpkGGlhtXplGBCemrvVQtKHVTMYNd
+Sorry! Not correct!
+Congratulations!
+Unlocked with passphrase %s
+/proc/sys/kernel/osrelease
+FATAL: kernel too old
+FATAL: cannot determine kernel version
+...
+(more irrelevant output below)
+
+jpkGGlhtXplGBCemrvVQtKHVTMYNd seems like a logical choice...
+
+success!
+(25) thot $ mystrings mgj7_1 > mgj7_1_mystrings-output.txt
+(26) thot $ ./mgj7_1
+jpkGGlhtXplGBCemrvVQtKHVTMYNd
+Congratulations!
+Unlocked with passphrase jpkGGlhtXplGBCemrvVQtKHVTMYNd
+(27) thot $
+
+
+############################################################
+
+##########>>>>> Logic behind this program <<<<<##########
+-The passphrase is stored in plain text in the compiled and assembled file.
+-This can be found with strings/mystrings. This output is included in excerpt form above,
+	and in complete form in the included text file (mgj7_1_mystrings-output.txt).
+-Not that hard to figure out :)
+
+##########                                                      #####
+########## Correct passphrase is: jpkGGlhtXplGBCemrvVQtKHVTMYNd #####
+##########                                                      #####
+
+############################################################
