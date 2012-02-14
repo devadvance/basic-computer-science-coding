@@ -1,0 +1,199 @@
+############################################################
+So, after a lot of effort, including lots of Googling...
+
+http://stackoverflow.com/questions/5475790/how-to-disassemble-the-main-function-of-a-stripped-application
+That helped a lot in figuring out some of the functions of GDB and intermediate-advanced disassembling.
+
+############################################################
+
+##########>>>>> Documented steps/comments taken to find the logic of this program <<<<<##########
+
+
+gdb mgj7_3
+b main is unable to find the function main. Interesting, may be dynamic loading or somehow no label for main function
+must use some form of printing and obtaining characters/strings from keyboard input. fgets and scanf don't work
+getchar works as a breakpoint
+Stepping through:
+Breakpoint 8, 0x00b48736 in getchar () from /lib/tls/libc.so.6
+(gdb) x/s $eax
+0xffffd5f0:  <Address 0xffffd5f0 out of bounds>
+(gdb) x/s (char *)$eax
+0xffffd5f0:  "a"
+(gdb) b *0x00b4879f
+Note: breakpoint 9 also set at pc 0xb4879f.
+Breakpoint 10 at 0xb4879f
+(gdb) c
+Continuing.
+
+Breakpoint 9, 0x00b4879f in getchar () from /lib/tls/libc.so.6
+(gdb) x/s (char *)$eax
+0xf7ffd001:  "bc\n"
+(gdb)
+
+
+Breakpoint 11, 0x00b487a0 in getchar () from /lib/tls/libc.so.6
+(gdb) x/s (char *)$eax
+0xf7ffd002:  "c\n"
+(gdb)
+
+Seems to be taking one character at a time...perhaps organizing them in a specific manner?
+Seems to be taking them one by one...perhaps to lower case?
+Ignores newline
+Scratch that, pressing enter 10 times works. Must be taking 10 characters.
+AH! after trying dozens of combinations:
+Breakpoint 11, 0x00b487a0 in getchar () from /lib/tls/libc.so.6
+(gdb) c
+Continuing.
+Congratulations!
+Unlocked with passphrase ABBBBBBBBB
+
+hmmm, seems not to care about the first character, must be the 9 B's that are important.
+Congratulations!
+Unlocked with passphrase abbbbbbbbb
+
+so it is eventually in lower case, so upper case doesn't matter. possibly ascii value based.
+
+Only cares about the 9 characters, confirmed.
+how to check the main method...need to do some research on how to debug without a main function
+ahhh, the main function must have been stripped, see here:
+http://stackoverflow.com/questions/5475790/how-to-disassemble-the-main-function-of-a-stripped-application
+"info registers" and "disas start memory address - end memory address" are extremely useful..perhaps good to learn in lab :)
+some sort of important function...begins here: 0x080483d4
+also 0x8048475
+and 0x8048481
+okay, less disas from 0x080483d4 to 0x0804900...seems far enough away.
+hmmm, tolower is a function? good.
+lower case b is ascii value 98. interesting. There's a sub 98:
+0x0804842c:     sub    $0x62,%eax
+okay, so subtract 98, load 1, shift 1 by that character value?
+yes! but there's a jne 9, so it must ONLY work if 9 are good "sll" values, hence ABBBBBBBBB works.
+
+
+############################################################
+
+##########>>>>> Logic behind this program <<<<<##########
+-Takes an input of characters. This INCLUDES newline.
+-It requires 10 characters
+-It checks each character against the following algorithm:
+1) Makes it lowercase
+2) Subtracts 98 from its ASCII value
+	-Also makes sure that the value is now 24 or less. Essentially, the user must have entered an alphabetical letter a-z or A-Z
+	-If it doesn't pass this test, start again with the next character
+3) Shifts the value of eax (which is 1) left by the remaining ascii value after it was subtracted by 98.
+4) Performs an AND operation on this value and 0x1501803, which is 0001 0101 0000 0001 1000 0000 0011, and then stores the resulting value
+5) Checks to see if the resulting value is either zero or something else
+6) If it is zero, go to the next character and reloop
+7) If it is not zero, add to the "success counter", which is the number of times a character has passed this test.
+8) After 10 characters have been checked, the loop ends.
+9) If the "success counter" is equal to 9, then the passphrase was good.
+10) If it was anything else other than 9, the passphrase was bad.
+11-...) Print success and the passphrase (only the first 10 characters entered), or print failure.
+...Done.
+
+So any passphrase with 9 good shift letters, which include:
+B
+C
+M
+V
+X
+Z
+
+All other letters are bad.
+
+A passphrase must consist of exactly 1 bad letter, and 9 good letters. Anything beyond the 10th letter doesn't matter.
+
+Examples:
+
+(21) thot $ ./mgj7_3
+AXXXXXXXXXXX
+Congratulations!
+Unlocked with passphrase AXXXXXXXXX
+(22) thot $ ./mgj7_3
+AZZZZZZZZZZZZZ
+Congratulations!
+Unlocked with passphrase AZZZZZZZZZ
+(23) thot $ ./mgj7_3
+AVVVVVVVVVVVV
+Congratulations!
+Unlocked with passphrase AVVVVVVVVV
+(24) thot $
+
+
+############################################################
+
+##########>>>>> Commented the relevant disassembled code (produced with GDB) <<<<<##########
+
+(gdb) disas 0x080483d4 - 0x0804900
+Dump of assembler code from 0x80483d4 to 0xff7fb700:
+0x080483d4:     push   %ebp
+0x080483d5:     mov    %esp,%ebp
+0x080483d7:     push   %ebx
+0x080483d8:     sub    $0x34,%esp # make stack space
+0x080483db:     movl   $0x0,0xffffffe4(%ebp) # allocate a region with 0 for the success counter. This will be used to verify the passphrase meeting the algorithmic specifications later on
+0x080483e2:     movl   $0x0,0xffffffe0(%ebp) # loop counter
+0x080483e9:     cmpl   $0x9,0xffffffe0(%ebp) #loop1
+0x080483ed:     jg     0x8048405 # end the loop if its more than 9 times
+0x080483ef:     lea    0xffffffe8(%ebp),%eax
+0x080483f2:     mov    %eax,%ebx
+0x080483f4:     add    0xffffffe0(%ebp),%ebx #
+0x080483f7:     call   0x80482ec # getchar (I think)
+0x080483fc:     mov    %al,(%ebx)
+0x080483fe:     lea    0xffffffe0(%ebp),%eax
+0x08048401:     incl   (%eax)
+0x08048403:     jmp    0x80483e9
+0x08048405:     lea    0xffffffe8(%ebp),%eax
+0x08048408:     add    0xffffffe0(%ebp),%eax
+0x0804840b:     movb   $0x0,(%eax) # move 0 into the counter location
+0x0804840e:     movl   $0x1,0xffffffe0(%ebp) # move 1 into the counter location
+0x08048415:     cmpl   $0xa,0xffffffe0(%ebp) #loop 2
+0x08048419:     jg     0x804845a # if the counter is > 10, go to the specified address
+0x0804841b:     lea    0xffffffe7(%ebp),%eax # add 3 
+0x0804841e:     add    0xffffffe0(%ebp),%eax # add the loop counter to eax
+# loop counter starts at 1, so it adds 3 in order to grab the 1st character from the phrase that was input by the user. aka, each time it goes (i + 3) characters(bytes) into the stack.
+0x08048421:     movsbl (%eax),%eax
+0x08048424:     mov    %eax,(%esp)
+0x08048427:     call   0x80482fc # tolower (again, I think)
+0x0804842c:     sub    $0x62,%eax # Subtract 98 from the character ascii value
+0x0804842f:     mov    %eax,0xffffffdc(%ebp) # move that into that stack location
+0x08048432:     cmpl   $0x18,0xffffffdc(%ebp) # compare that number with 24, meaning that it has to be an alphabetical character
+0x08048436:     ja     0x8048453 # jump if its greater than 24
+0x08048438:     mov    $0x1,%eax # make eax 1
+0x0804843d:     movzbl 0xffffffdc(%ebp),%ecx # move the current character/value to ecx
+0x08048441:     shl    %cl,%eax # shift eax (which is 1) left by the remaining ascii value value
+0x08048443:     and    $0x1501803,%eax # perform an AND operation on eax with 0x1501803, which is 0001 0101 0000 0001 1000 0000 0011, and then store it in eax
+0x08048448:     test   %eax,%eax # test to see if it is zero. zero means it contained nothing after the AND, whereas any other value works.
+0x0804844a:     jne    0x804844e # if its not zero, skip a line so it doesn't just reloop
+0x0804844c:     jmp    0x8048453 # if the test turned out zero, then this jump happens
+# if the jump didn't happen, it means the AND left a value remaining, and then this goes on:
+0x0804844e:     lea    0xffffffe4(%ebp),%eax # this is the success counter
+0x08048451:     incl   (%eax) # increment it in memory (NOT THE ADDRESS, the actual value)
+0x08048453:     lea    0xffffffe0(%ebp),%eax # this is loop counter address
+0x08048456:     incl   (%eax) # increment it in memory (NOT THE ADDRESS, the actual value)
+0x08048458:     jmp    0x8048415 # go back to the start of loop 2 again
+0x0804845a:     cmpl   $0x9,0xffffffe4(%ebp) # after loop 2 is done, you end up here. This compares the success counter to a constant...in this case its 9. Which means that 9 characters out of 10 had to pass the loop test (the AND)
+0x0804845e:     jne    0x8048475 # if it didn't pass, jump
+0x08048460:     lea    0xffffffe8(%ebp),%eax  # load the input phrase into eax
+0x08048463:     mov    %eax,0x4(%esp) # load the phrase that was input from eax to the stack
+0x08048467:     movl   $0x80485bc,(%esp) # load the success statement (it includes a %s)
+0x0804846e:     call   0x804831c # printf function
+0x08048473:     jmp    0x8048481 # jump out to the end of the function
+0x08048475:     movl   $0x80485ea,(%esp) # move the failure statement to the stack
+0x0804847c:     call   0x804831c # printf function
+0x08048481:     add    $0x34,%esp # change the stack pointer (exiting this function)
+0x08048484:     pop    %ebx
+0x08048485:     leave
+0x08048486:     ret
+0x08048487:     push   %ebp
+0x08048488:     mov    %esp,%ebp
+0x0804848a:     sub    $0x8,%esp
+0x0804848d:     call   0x80483d4
+0x08048492:     leave
+0x08048493:     ret
+0x08048494:     push   %ebp
+0x08048495:     mov    %esp,%ebp
+0x08048497:     sub    $0x8,%esp
+0x0804849a:     movl   $0x80485ff,0xfffffffc(%ebp)
+0x080484a1:     call   0x8048487
+0x080484a6:     leave
+0x080484a7:     ret
+############################################################
