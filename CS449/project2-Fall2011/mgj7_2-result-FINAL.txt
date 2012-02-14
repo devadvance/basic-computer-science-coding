@@ -1,0 +1,81 @@
+############################################################
+
+##########>>>>> Documented steps/comments taken to find the logic of this program <<<<<##########
+
+trying mystrings again first, just to see
+
+Found the following in the output of mystrings (mgj7_2_mystrings-output.txt):
+
+(irrelevant output above)
+...
+GLIBC_2.0
+PTRhP
+]fS}lNJUMe
+Sorry! Not correct!
+Congratulations!
+Unlocked with passphrase %s
+GCC: (GNU) 3.4.6 20060404 (Red Hat 3.4.6-3)
+GCC: (GNU) 3.4.6 20060404 (Red Hat 3.4.6-3)
+GCC: (GNU) 3.4.6 20060404 (Red Hat 3.4.6-8)
+...
+(irrelevant output below)
+
+let's try "]fS}lNJUMe"
+
+(18) thot $ ./mgj7_2
+]fS}lNJUMe
+Sorry! Not correct!
+
+nope, not that easy
+gdb time..
+
+Found mgj7_2 in the eax register at breakpoint (see below)
+Potentially has "mgj7_2" in it somewhere
+Tried mgj7_2 as the passphrase, no luck.
+repnz scas %es:(%edi),%al is potentially just getting string length, meaning whatever happens needs to know how long it is.
+Used the test phrase testabc
+Continued to breakpoint 0x080485c7:
+# ##########
+# Console output starts here
+Breakpoint 5, 0x080485c7 in main ()
+(gdb) x/s (char *)$eax
+0xffffd837:  "mgj7_2"
+(gdb) x/s (char *)$ebx
+0xffffd540:  "testabc_2"
+(gdb)
+# End console output
+# ##########
+
+This means that perhaps mgj7_2 is the passphrase that it checks to see for matching purposes...
+but it gets mutated first. aka testabc became testabc_2
+
+Checked to see if this was the case:
+# ##########
+# Console output starts here
+(45) thot $ ./mgj7_2
+testabc_2
+Sorry! Not correct!
+(46) thot $ ./mgj7_2
+mgj7
+Congratulations!
+Unlocked with passphrase mgj7
+(47) thot $
+# End console output
+# ##########
+
+
+############################################################
+
+##########>>>>> Logic behind this program <<<<<##########
+-By using GDB and stepping through the program, you can see the following occurs:
+>Takes the input phrase, checks to see how long it is
+>Goes to the end and appends "_2" to it, (ex: testabc becomes testabc_2)
+>Compares it against the correct passphrase, which is mgj7_2.
+>This means that you need to input mgj7 (NOT mgj7_2) and then the _2 gets automatically appended
+
+
+##########                             #####
+########## Correct passphrase is: mgj7 #####
+##########                             #####
+
+############################################################
