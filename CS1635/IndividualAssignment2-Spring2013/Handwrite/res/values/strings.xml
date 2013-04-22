@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Handwrite</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="menu_save">Save</string>
+    <string name="menu_clear">Clear</string>
+    <string name="menu_load">Load</string>
+    <string name="menu_preferences">Preferences</string>
+    <string name="menu_recognize">Recognize</string>
+    <string name="title_activity_preferences">Preferences</string>
+    <string name="red">Red</string>
+    <string name="green">Green</string>
+    <string name="blue">Blue</string>
+    <string name="color_preview">Color Picker Preview</string>
+
+</resources>

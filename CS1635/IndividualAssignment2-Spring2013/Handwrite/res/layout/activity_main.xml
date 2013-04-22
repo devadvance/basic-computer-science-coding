@@ -1,0 +1,42 @@
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent"
+  android:orientation="vertical" xmlns:tools="http://schemas.android.com/tools">
+
+  <LinearLayout
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:layout_weight="0.1"
+      android:orientation="horizontal"
+      tools:ignore="InefficientWeight" >
+
+				<com.cs1635.mgj7.handwrite.DrawingPanel
+			        android:id="@+id/drawingPanel1"
+			        android:layout_width="fill_parent"
+			        android:layout_height="fill_parent" 
+			        android:dividerHeight="2dp" />
+
+
+
+    </LinearLayout> 
+
+<LinearLayout
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="45dp"
+    > 
+
+
+
+                <Button
+			        android:id="@+id/button1"
+			        android:layout_width="fill_parent"
+			        android:layout_height="fill_parent"
+			        
+                    android:paddingRight="20dp"
+			        android:onClick="recognize"
+			        android:text="@string/menu_recognize" />
+
+</LinearLayout>
+</LinearLayout>

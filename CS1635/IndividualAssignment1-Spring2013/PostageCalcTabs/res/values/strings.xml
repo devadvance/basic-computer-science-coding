@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">PostageCalcTabs</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_calculate">CalculateActivity</string>
+    <string name="title_activity_info">InfoActivity</string>
+    <string name="title_activity_android_tab_layout">Postage Calculator</string>
+    <string name="info_string">Info tab here</string>
+    <string name="calculate_string">Calculate tab here</string>
+    <string name="calc_button">Calculate</string>
+    <string name="input_directions">Choose the type of mail you want to send:</string>
+    <string name="weight_input">Enter the weight:</string>
+    <string name="letters">Letter</string>
+    <string name="large_envelopes">Large Envelope</string>
+    <string name="packages">Package</string>
+    <string name="weight_hint">0 &#8211; 13 oz</string>
+    <string-array name="post_type">
+        <item>Select package type&#8230;</item>
+        <item>Letters</item>
+        <item>Large Envelopes</item>
+        <item>Packages</item>
+    </string-array>
+    <string name="select_please">Please select a package type above!</string>
+    <string name="image_desc">Diagram of post type</string>
+	<string name="info_letters">
+		\n
+		&#8226; Must be rectangular.\n
+		&#8226; Minimum size is 5" long x 3 1/2" high x 0.007” thick.\n
+		&#8226; Maximum size of 11 1/2" long x 6 1/8" high x 1/4” thick.\n
+		&#8226; Maximum weight is 3.5 oz.\n
+		&#8226; A letter will be charged a nonmachinable surcharge if it’s a square letter 5" x 5" or larger, 
+		it doesn’t bend easily, has clasps or similar closure devices, has an address parallel to the shorter 
+		dimension of the letter, is lumpy, or the length divided by height is less than 1.3 or more than 2.5.\n
+		&#8226; Most hazardous materials cannot be shipped.\n
+	</string>
+	<string name="info_large">
+		\n
+		&#8226; Must be rectangular.\n
+		&#8226; Minimum size is either more than 11 1/2 inch long x 6 1/8 inch high OR 1/4 inch thick.\n
+		&#8226; Maximum size is 15 inch long x 12 inch high x 3/4 inch thick.\n
+		&#8226; Maximum weight of 13 oz.\n
+		&#8226; Large envelopes that exceed these dimensions will be charged package rates.\n
+		&#8226; Most hazardous materials cannot be shipped.\n
+	</string>
+	<string name="info_packages">
+		\n
+		&#8226; Maximum weight of 13 oz.\n
+		&#8226; Up to 108″ in combined length and girth.\n
+		&#8226; Most hazardous materials cannot be shipped.\n
+		&#8226; With few exceptions, cigarettes and smokeless tobacco shipments cannot be mailed.\n
+	</string>
+
+</resources>
