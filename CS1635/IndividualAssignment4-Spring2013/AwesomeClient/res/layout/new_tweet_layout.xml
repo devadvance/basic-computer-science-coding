@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    
+    <TextView
+        android:id="@+id/newTweet_text"
+        android:layout_alignParentTop="true"
+        android:gravity="center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Enter the tweet to post:"
+        />
+    
+    <EditText
+        android:id="@+id/newTweet_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/newTweet_text"
+        android:layout_centerHorizontal="true"
+        android:hint="Enter something!"
+        android:inputType="textMultiLine" />
+    
+    <Button
+        android:id="@+id/newTweet_postButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/newTweet_content"
+        android:layout_centerHorizontal="true"
+        android:text="Post Tweet" />
+
+</RelativeLayout>

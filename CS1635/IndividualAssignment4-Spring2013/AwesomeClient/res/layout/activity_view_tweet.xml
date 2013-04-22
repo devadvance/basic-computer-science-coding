@@ -1,0 +1,52 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ViewTweet" >
+
+    <TextView
+        android:id="@+id/viewTweet_Text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="6dip"
+        android:textSize="16sp"
+        android:text="@string/hello_world" />
+        
+    <ImageView
+        android:id="@+id/viewTweet_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:maxWidth="50dp"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/viewTweet_Text"
+        android:layout_marginRight="6dip"
+        android:layout_marginLeft="6dip" 
+		android:src="@drawable/ic_launcher" />
+        
+    
+    <TextView
+        android:id="@+id/viewTweet_Poster"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/viewTweet_Text"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="6dip"
+        android:layout_toRightOf="@+id/viewTweet_image"
+        android:textSize="20sp"
+        android:text="Poster" />
+    
+    <TextView
+        android:id="@+id/viewTweet_Date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/viewTweet_image"
+        android:layout_marginTop="12dp"
+        android:layout_marginLeft="6dip"
+        android:layout_alignParentLeft="true"
+        android:textSize="20sp"
+        android:text="Posted" />
+    
+</RelativeLayout>
