@@ -8,7 +8,7 @@ This is a repo containing nearly all of the projects I did as a Computer Science
 
 They are (generally) written in Java or C, and may be complete programs, or merely code snippets.
 
-Note: I have moved this repo from Google Code on 2015-09-03, as Google Code is shutting down. This repo was originally hosted [here](https://code.google.com/p/basic-computer-science-coding/).
+Note: I have moved this repo from Google Code on 2015-09-03, as Google Code shut down. This repo was originally hosted [here](https://code.google.com/p/basic-computer-science-coding/).
 
 ## Class and project information
 
@@ -40,7 +40,7 @@ Includes projects for the following classes:
 *   CS1653 - Applied Cryptography and Network Security
 *   CS1655 - Secure Data Management and Web Applications
 
-See [this page](http://matthewgjoseph.com/undergradwork/) for additional information about each project.
+See [this page](https://mattj.io/undergradwork/) for additional information about each project.
 
 ## License
 
